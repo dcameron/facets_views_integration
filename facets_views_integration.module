@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Contains functions for the Facets Views Integration module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function facets_views_integration_form_views_exposed_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $params = \Drupal::requestStack()->getCurrentRequest()->query->all();
+  $facet_manager = \Drupal::service('facets.manager');
+  $facets = $facet_manager->getEnabledFacets();
+  foreach ($facets as $facet) {
+    $filter_keys[] = empty($facet->getFacetSourceConfig()->getFilterKey()) ? 'f' : $facet->getFacetSourceConfig()->getFilterKey();
+
+  }
+  if (!empty($filter_keys)) {
+    foreach (array_unique($filter_keys) as $filter_key) {
+      if (!empty($param_values = $params[$filter_key])) {
+        // Add facet parameters to hidden fields in the forms.
+        foreach ($param_values as $key => $value) {
+          $form[$filter_key . '[' . $key . ']'] = [
+            '#type' => 'hidden',
+            '#value' => $value,
+          ];
+        }
+      }
+    }
+  }
+}
