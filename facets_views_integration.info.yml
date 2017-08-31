@@ -1,0 +1,6 @@
+name: Facets Views Integration
+type: module
+description: 'Alters Views exposed search forms to retain selected facet filters.'
+package: Search
+core: 8.x
+dependencies: {  }
